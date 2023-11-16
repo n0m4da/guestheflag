@@ -42,7 +42,7 @@ struct ContentView: View {
                          
                     }
                     .alert(scoreTitle,isPresented: $showingScore){
-                        Button("Siguiente", action: askQuestion)
+                        Button("Siguiente_", action: askQuestion)
                     }message: {
                         Text("\(score) de \(versus)")
                     }//alert
