@@ -17,43 +17,71 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(colors: [.blue, .black], startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
+//            LinearGradient(colors: [.blue, .black], startPoint: .top, endPoint: .bottom)
+//                .ignoresSafeArea()
             
-            VStack(spacing: 30){
-                VStack {
-                    Text("Tap the flag of")
-                        .foregroundStyle(.white)
-                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                    Text(countries[correctAnswer])
-                        .foregroundStyle(.white)
-                        .font(.largeTitle)
-                    
-                }
-                .padding()
+            RadialGradient(stops: [
+                .init(color: Color(red: 0.1, green: 0.2, blue: 0.45), location: 0.3),
+                .init(color: Color(red: 0.76, green: 0.15, blue: 0.26), location: 0.3)
+            ],center: .top, startRadius: 200 , endRadius: 700)
+            .ignoresSafeArea()
+            
+            VStack {
+                Spacer()
+                Text("Guess the flag")
+                    .font(.largeTitle.bold())
+                    .foregroundStyle(.white)
                 
-                ForEach(0..<3){ number in
-                    
-                    Button{
-                        //MARK: - button
-                        flagtapped(number)
-                    }label: {
-                        Image(countries[number])
-                         
+                VStack(spacing: 15){
+                    VStack {
+      
+                        Text("Tap the flag of")
+                            .foregroundStyle(.secondary)
+                            .font(.subheadline.weight(.heavy))
+                        Text(countries[correctAnswer])
+                            .font(.largeTitle.weight(.semibold))
+                        
                     }
-                    .alert(scoreTitle,isPresented: $showingScore){
-                        Button("Siguiente", action: askQuestion)
-                    }message: {
-                        Text("\(score) de \(versus)")
-                    }//alert
+                    .padding()
                     
-                }//foreach
-            }//vstack
+                    ForEach(0..<3){ number in
+                        
+                        Button{
+                            //MARK: - button
+                            flagtapped(number)
+                        }label: {
+                            Image(countries[number])
+                                .clipShape(.capsule)
+                                .shadow(radius: 10)
+                             
+                        }
+                            .alert(scoreTitle,isPresented: $showingScore){
+                                Button("Siguiente", action: askQuestion)
+                            }message: {
+                                Text("\(score) de \(versus)")
+                            }//alert
+                        
+                    }//foreach
+                }//vstack
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+                .background(.regularMaterial)
+            .clipShape(.rect(cornerRadius: 20))
+                Spacer()
+                Spacer()
+                Text("Score: \(score)")
+                    .foregroundStyle(.white)
+                    .font(.largeTitle.bold())
+                Spacer()
+            }
+            .padding()
+        
+            
 
         }//zstack
-        
-   
     }
+    
+    
     func flagtapped(_ number: Int){
         if(number == correctAnswer){
             scoreTitle = "Correcto"
