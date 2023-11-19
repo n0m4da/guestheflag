@@ -9,10 +9,13 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showingScore: Bool = false
+    @State private var showingFinalScore: Bool = false
     @State private var scoreTitle: String = ""
     @State private var score : Int = 0
     @State private var versus: Int = 0
+    @State private var buttonText: String = "Next"
     @State private var countries : [String] = ["Estonia","France","Germany","Ireland","Italy","Nigeria","Poland", "Spain", "UK", "Ukraine", "US"].shuffled()
+
     @State private var correctAnswer: Int = Int.random(in: 0...2)
     
     var body: some View {
@@ -56,10 +59,20 @@ struct ContentView: View {
                              
                         }
                             .alert(scoreTitle,isPresented: $showingScore){
-                                Button("Siguiente", action: askQuestion)
+                                Button(buttonText){
+                                    if versus == 8 {
+                                        reStart()
+                                    } else {
+                                        askQuestion()
+                                    }
+                                }
                             }message: {
-                                Text("\(score) de \(versus)")
+                                Text("\(score) of \(versus)")
                             }//alert
+                           
+                        
+                        
+                            
                         
                     }//foreach
                 }//vstack
@@ -84,18 +97,32 @@ struct ContentView: View {
     
     func flagtapped(_ number: Int){
         if(number == correctAnswer){
-            scoreTitle = "Correcto"
+            scoreTitle = "Correct"
             score += 1
         }else{
-            scoreTitle = "Inconrrecto"
+            scoreTitle = "Incorrect"
         }
         versus+=1
         showingScore.toggle()
+  
+        if versus == 8 {
+            scoreTitle = "Final score"
+            buttonText = "Let's try again"
+          
+        }
+        
     }
     
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+    }
+    
+    func reStart(){
+        score = 0
+        versus = 0
+        buttonText = "Next"
+        askQuestion()
     }
 }
 
