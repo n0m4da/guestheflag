@@ -16,6 +16,7 @@ struct FlagImage: View {
 }
 
 struct ContentView: View {
+    //MARK: - PROPERTIES
     @State private var showingScore: Bool = false
     @State private var showingFinalScore: Bool = false
     @State private var scoreTitle: String = ""
@@ -26,6 +27,14 @@ struct ContentView: View {
 
     @State private var correctAnswer: Int = Int.random(in: 0...2)
     
+    //MARK: - properties ANIMATION
+    @State private var showAnimation: Bool = false
+    @State private var animation = 0.0
+    @State private var wrongAnswer = false
+    @State private var onlyWrong = false
+    @State private var scale = 1.0
+    
+    //MARK: - body
     var body: some View {
         ZStack {
 //            LinearGradient(colors: [.blue, .black], startPoint: .top, endPoint: .bottom)
@@ -59,7 +68,12 @@ struct ContentView: View {
                         
                         Button{
                             //MARK: - button
-                            flagtapped(number)
+                            withAnimation{
+                            animation += 360
+                             
+                                flagtapped(number)
+                            }
+                            
                         }label: {
                             FlagImage(imageNumber: number, countries: countries)
                              
@@ -75,6 +89,14 @@ struct ContentView: View {
                             }message: {
                                 Text("\(score) of \(versus)")
                             }//alert
+                            .rotation3DEffect(.degrees(correctAnswer == number  && scoreTitle == "Correct" ? 360: 0),
+                                              axis: (x:1.0, y:0.0, z: 0.0)
+                            )
+                            .opacity(self.wrongAnswer && number != self.correctAnswer ? 0.21 : 1)
+                            .rotation3DEffect(.degrees(self.wrongAnswer && number != self.correctAnswer ?  360 : 0),
+                                              axis: (x:0.0, y:1.0, z: 0.0)
+                            )
+                            .scaleEffect(self.wrongAnswer && number != self.correctAnswer ? 0.8 : 1)
                            
                         
                         
@@ -106,11 +128,12 @@ struct ContentView: View {
             scoreTitle = "Correct"
             score += 1
         }else{
+            onlyWrong = true
             scoreTitle = "Incorrect"
         }
         versus+=1
         showingScore.toggle()
-  
+        wrongAnswer = true
         if versus == 8 {
             scoreTitle = "Final score"
             buttonText = "Let's try again"
@@ -122,6 +145,9 @@ struct ContentView: View {
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        wrongAnswer = false
+        scoreTitle = ""
+        onlyWrong = false
     }
     
     func reStart(){
